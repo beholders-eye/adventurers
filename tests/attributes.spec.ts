@@ -1,17 +1,40 @@
 import { test, expect } from '@playwright/test'
 
-test('Validate attributes', async ({ request }) => {
-  const response = await request.get(
-    'https://adventurers-guild-api.vercel.app/api/attributes',
-  )
+type TestParameters = {
+  index: number
+  id: number
+  name: string
+  shortname: string
+  description: string
+  firstSkill: string
+}
 
-  const responseBody = await response.json()
+validateAttribute(
+  {
+    index: 0, id: 1, name: 'Strength', shortname: 'STR',
+    description: 'physical power', firstSkill: 'Athletics'
+  })
+validateAttribute(
+  {
+    index: 1, id: 2, name: 'Dexterity', shortname: 'DEX',
+    description: 'affects actions that require speed, precision, and stealth', firstSkill: 'Acrobatics'
+  }
+)
 
-  expect(response.status()).toBe(200)
+function validateAttribute(params: TestParameters) {
+  test("Validate the " + params.shortname + " attribute", async ({ request }) => {
+    const response = await request.get(
+      'https://adventurers-guild-api.vercel.app/api/attributes'
+    )
 
-  expect(responseBody[0].id).toBe(1)
-  expect(responseBody[0].name).toBe('Strength')
-  expect(responseBody[0].shortname).toBe('STR')
-  expect(responseBody[0].description).toContain('physical power')
-  expect(responseBody[0].skills[0]).toBe('Athletics')
-})
+    const responseBody = await response.json()
+
+    expect(response.status()).toBe(200)
+
+    expect(responseBody[params.index].id).toBe(params.id)
+    expect(responseBody[params.index].name).toBe(params.name)
+    expect(responseBody[params.index].shortname).toBe(params.shortname)
+    expect(responseBody[params.index].description).toContain(params.description)
+    expect(responseBody[params.index].skills[0]).toBe(params.firstSkill)
+  })
+}
