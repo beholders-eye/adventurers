@@ -1,0 +1,365 @@
+{
+  "info": {
+    "_postman_id": "a3335c1a-86b1-4d89-96aa-fd995d4b79f2",
+    "name": "Adventurers",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44882839",
+    "_collection_link": "https://go.postman.co/collection/44882839-a3335c1a-86b1-4d89-96aa-fd995d4b79f2?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Attributes",
+      "item": [
+        {
+          "name": "attributes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response",
+                  "var jsonData = resp.json()",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    resp.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is less than 1s\", function () {",
+                  "    pm.expect(resp.responseTime).to.be.below(1000);",
+                  "",
+                  "});",
+                  "",
+                  "pm.test(\"Body matches string\", function () {",
+                  "    pm.expect(resp.text()).to.include(\"Athletics\");",
+                  "});",
+                  "",
+                  "pm.test(\"The first attribute should be Strength\", function () {",
+                  "    pm.expect(jsonData[0].name).to.eql(\"Strength\");",
+                  "});",
+                  "",
+                  "pm.test(\"Validate Strength\", function() {",
+                  "    pm.expect(jsonData[0].id).to.eql(1);",
+                  "    pm.expect(jsonData[0].name).to.eql(\"Strength\");",
+                  "    pm.expect(jsonData[0].shortname).to.eql(\"STR\");",
+                  "    pm.expect(jsonData[0].description).to.eql(\"Measures physical power, carrying capacity, and effectiveness in brute-force actions such as lifting, pushing, and melee attacks.\");",
+                  "})",
+                  "",
+                  "pm.test(\"Validate Dexterity\", function() {",
+                  "    pm.expect(jsonData[1].name).to.eql(\"Dexterity\")",
+                  "    pm.expect(jsonData[1].shortname).to.eql(\"DEX\");",
+                  "    pm.expect(jsonData[1].description).includes(\"reflexes\")",
+                  "    pm.expect(jsonData[1].description).includes(\"precision\")",
+                  "    pm.expect(jsonData[1].skills.length).to.eql(3) ",
+                  "    pm.expect(jsonData[1].skills[2]).eqls(\"Stealth\")",
+                  "})",
+                  "",
+                  "pm.test(\"Validate Constitution\", function() {",
+                  "    pm.expect(jsonData[2].name).eqls(\"Constitution\")",
+                  "    pm.expect(jsonData[2].shortname).eqls(\"CON\")",
+                  "    pm.expect(jsonData[2].description).includes(\"endurance\")",
+                  "    pm.expect(jsonData[2].description).includes(\"physical toughness\")",
+                  "    pm.expect(jsonData[2].skills.length).to.eql(0)",
+                  "})",
+                  "",
+                  "pm.test(\"Validate Intelligence\", function() {",
+                  "    pm.expect(jsonData[3].name).eqls(\"Intelligence\")",
+                  "    pm.expect(jsonData[3].shortname).eqls(\"INT\")",
+                  "    pm.expect(jsonData[3].description).includes(\"analytical ability\")",
+                  "    pm.expect(jsonData[3].description).includes(\"logical thinking\")",
+                  "    pm.expect(jsonData[3].skills.length).to.eql(5)",
+                  "    pm.expect(jsonData[3].skills[2]).to.eql(\"Investigation\")",
+                  "})",
+                  "",
+                  "pm.test(\"Validate Wisdom\", function() {",
+                  "    pm.expect(jsonData[4].name).eqls(\"Wisdom\")",
+                  "    pm.expect(jsonData[4].shortname).eqls(\"WIS\")",
+                  "    pm.expect(jsonData[4].description).includes(\"good judgment\")",
+                  "    pm.expect(jsonData[4].description).includes(\"perception\")",
+                  "    pm.expect(jsonData[4].skills.length).to.be.eql(5)",
+                  "})",
+                  "",
+                  "pm.test(\"Validate Charisma\", function() {",
+                  "    pm.expect(jsonData[5].name).to.be.eql(\"Charisma\")",
+                  "    pm.expect(jsonData[5].shortname).eqls(\"CHA\")",
+                  "    pm.expect(jsonData[5].description).includes(\"confidence\")",
+                  "    pm.expect(jsonData[5].description).includes(\"social impact\")",
+                  "    pm.expect(jsonData[5].skills).to.not.be.empty",
+                  "    pm.expect(jsonData[5].skills[3]).eqls(\"Persuasion\")",
+                  "    pm.expect(jsonData[5].skills[4]).undefined",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://{{BASE_FQDN}}/api/attributes",
+              "protocol": "https",
+              "host": [
+                "{{BASE_FQDN}}"
+              ],
+              "path": [
+                "api",
+                "attributes"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"TOKEN\", jsonData.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{USER}}\",\n    \"password\": \"{{PWD}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://{{BASE_FQDN}}/api/auth/token",
+              "protocol": "https",
+              "host": [
+                "{{BASE_FQDN}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chars",
+      "item": [
+        {
+          "name": "characters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response",
+                  "var jsonData = resp.json()",
+                  "pm.test(\"Validate count\", function() {",
+                  "    pm.expect(jsonData.length).eqls(3)",
+                  "    pm.expect(jsonData[0].name).to.be.eql(\"Xalazaaar The Barbarian\")",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://{{BASE_FQDN}}/api/characters",
+              "protocol": "https",
+              "host": [
+                "{{BASE_FQDN}}"
+              ],
+              "path": [
+                "api",
+                "characters"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "characters create",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var ts = new Date().getMilliseconds()",
+                  "pm.environment.set(\"charRandomName\", \"Char -- \" + ts.toString())"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response",
+                  "var jsonData = resp.json()",
+                  "pm.test(\"check character name\", function() {",
+                  "    pm.expect(jsonData.name).to.be.eql(pm.environment.get(\"charRandomName\"))",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"{{charRandomName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://{{BASE_FQDN}}/api/characters",
+              "protocol": "https",
+              "host": [
+                "{{BASE_FQDN}}"
+              ],
+              "path": [
+                "api",
+                "characters"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "character delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://{{BASE_FQDN}}/api/characters/{{CHAR_ID}}",
+              "protocol": "https",
+              "host": [
+                "{{BASE_FQDN}}"
+              ],
+              "path": [
+                "api",
+                "characters",
+                "{{CHAR_ID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "character change name",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Gutz The Berserker\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://{{BASE_FQDN}}/api/characters/{{CHAR_ID}}",
+              "protocol": "https",
+              "host": [
+                "{{BASE_FQDN}}"
+              ],
+              "path": [
+                "api",
+                "characters",
+                "{{CHAR_ID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
