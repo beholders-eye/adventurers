@@ -29,6 +29,20 @@ validateAttribute(
   }
 )
 
+validateAttribute(
+  {
+    index: 3, id: 4, name: 'Intelligence', shortname: 'INT',
+    description: 'linked to learning, investigation, and logical', firstSkill: 'Arcana'
+  }
+)
+
+validateAttribute(
+  {
+    index: 4, id: 5, name: 'Wisdom', shortname: 'WIS',
+    description: 'good judgment. It reflects how well a character understands the', firstSkill: 'Animal Handling'
+  }
+)
+
 function validateAttribute(params: TestParameters) {
   test("Validate the " + params.shortname + " attribute", async ({ request }) => {
     const response = await request.get(
