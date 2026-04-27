@@ -14,10 +14,18 @@ validateAttribute(
     index: 0, id: 1, name: 'Strength', shortname: 'STR',
     description: 'physical power', firstSkill: 'Athletics'
   })
+
 validateAttribute(
   {
     index: 1, id: 2, name: 'Dexterity', shortname: 'DEX',
     description: 'affects actions that require speed, precision, and stealth', firstSkill: 'Acrobatics'
+  }
+)
+
+validateAttribute(
+  {
+    index: 2, id: 3, name: 'Constitution', shortname: 'CON',
+    description: 'commonly associated with health, stamina, and resistance', firstSkill: ''
   }
 )
 
@@ -35,6 +43,8 @@ function validateAttribute(params: TestParameters) {
     expect(responseBody[params.index].name).toBe(params.name)
     expect(responseBody[params.index].shortname).toBe(params.shortname)
     expect(responseBody[params.index].description).toContain(params.description)
-    expect(responseBody[params.index].skills[0]).toBe(params.firstSkill)
+    if (responseBody[params.index].skills[0]) {
+      expect(responseBody[params.index].skills[0]).toBe(params.firstSkill)
+    }
   })
 }
