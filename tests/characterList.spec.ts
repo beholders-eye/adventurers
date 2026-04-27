@@ -47,5 +47,7 @@ function validateCharList() {
 
     expect(charResponseBody).toHaveProperty("length")
     expect(charResponseBody.length).toBeGreaterThan(2)
+
+    expect(charResponseBody[0].id).toBe(1675)
   })
 }
