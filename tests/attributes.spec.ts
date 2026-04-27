@@ -43,6 +43,13 @@ validateAttribute(
   }
 )
 
+validateAttribute(
+  {
+    index: 5, id: 6, name: 'Charisma', shortname: 'CHA',
+    description: 'confidence, influence, and social impact. It affects persuasion, leadership, and interpersonal interactions.', firstSkill: 'Deception'
+  }
+)
+
 function validateAttribute(params: TestParameters) {
   test("Validate the " + params.shortname + " attribute", async ({ request }) => {
     const response = await request.get(
