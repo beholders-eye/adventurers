@@ -1,9 +1,29 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, APIRequestContext } from '@playwright/test'
 
-var token: string
+let token: string
+let charID: string
 
 auth()
-validateCharList()
+
+test.describe.serial("Whole test", () => {
+  validateCharList()
+})
+
+async function authToken(request: APIRequestContext) {
+  const user: string = process.env.API_USER
+  const password: string = process.env.API_PWD
+
+  expect(user).toBeDefined()
+  expect(password).toBeDefined()
+
+  return request.post(
+    "https://adventurers-guild-api.vercel.app/api/auth/token",
+    {
+      data: { username: user, password: password }
+    }
+  )
+}
+
 
 function auth() {
   test("Generate a token", async ({ request }) => {
@@ -29,6 +49,7 @@ function auth() {
 
     // Save the token
     token = "Bearer " + tokenResponseBody.token
+    process.env.API_TOKEN = token
   })
 }
 
@@ -49,5 +70,10 @@ function validateCharList() {
     expect(charResponseBody.length).toBeGreaterThan(2)
 
     expect(charResponseBody[0].id).toBe(1675)
+    charID = charResponseBody[0].id
   })
+}
+
+function validateChar() {
+  test("Validate character", async ({ request }) => { })
 }

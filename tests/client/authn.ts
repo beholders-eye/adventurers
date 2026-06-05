@@ -5,10 +5,13 @@ export async function token(request: APIRequestContext) {
   const user: string = process.env.API_USER
   const password: string = process.env.API_PWD
 
-  return request.post(
+  const response = await request.post(
     HTTP_P_SCHEMA + "://" + BASE_FQDN + TOKEN_ENDPOINT,
     {
       data: { username: user, password: password }
     }
   )
+  const jsonToken = await response.json()
+
+  return jsonToken.token
 }
