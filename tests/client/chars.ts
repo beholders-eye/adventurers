@@ -45,3 +45,16 @@ export async function getChar(
 
   return response
 }
+
+export async function getChars(
+  request: APIRequestContext,
+  token: string,
+) {
+  const response = await request.get('/api/characters', {
+    headers: {
+      Authorization: 'Bearer ' + token
+    }
+  })
+
+  return response
+}

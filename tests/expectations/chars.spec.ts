@@ -1,6 +1,6 @@
-import { expect, request, test } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 import { token } from "../client/authn"
-import { createChar, getChar, patchChar } from "../client/chars"
+import { createChar, getChar, getChars, patchChar } from "../client/chars"
 import { listClasses } from "../client/classes"
 import { statusCreated, statusOK } from "../lib/common"
 import { Character } from "../schemas/chars"
@@ -162,4 +162,15 @@ test.describe.serial("Sanchez the Barbarian Outcast", () => {
 
     expect(sanchezIsBorn.status).toBe(COMPLETE)
   })
+})
+
+test("List characters", async ({ request }) => {
+  const charsResponse = await getChars(request, currentToken)
+  const chars = await charsResponse.json()
+
+  statusOK(charsResponse)
+
+  expect(chars).toHaveAttribute("length")
+  expect(chars.length).toBeGreaterThan(2)
+  expect(chars[0].id).toBe(1675)
 })
