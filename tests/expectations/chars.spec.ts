@@ -33,9 +33,8 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
     expect(chars[1].id).toBe(1698)
     expect(chars[2].name).toBe("Char -- 717")
 
-    let response = await delChar(request, currentToken, 4183)
-    response = await delChar(request, currentToken, 4184)
-    response = await delChar(request, currentToken, 4187)
+    let response = await delChar(request, currentToken, 4193)
+    response = await delChar(request, currentToken, 4194)
   })
 
   test("Fetch, verify and save the Barbarian class Id", async ({ request }) => {
@@ -221,11 +220,26 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
   test("Sanchez is complete", async ({ request }) => {
     const sanchezIsBornResponse = await getChar(request, currentToken, charId)
     const sanchezIsBorn = await sanchezIsBornResponse.json()
-    console.log(sanchezIsBorn)
+    // console.log(sanchezIsBorn)
 
     statusOK(sanchezIsBornResponse)
 
+    expect(sanchezIsBorn.backgroundDetails.feat).toBe("Healer")
+    expect(sanchezIsBorn.backgroundDetails.toolProficiency).toBe("Herbalism Kit")
+    expect(sanchezIsBorn.speciesDetails.speed).toBe(30)
+    expect(sanchezIsBorn.classDetails.subclasses.length).toBe(4)
+    expect(sanchezIsBorn.classDetails.subclasses[2]).toBe("World Tree")
+    expect(sanchezIsBorn.classDetails.role).toBe("melee")
+    expect(sanchezIsBorn.classDetails.spellcasting).toBeNull()
+    expect(sanchezIsBorn.weaponAttacks[0].name).toBe("Quarterstaff")
+    expect(sanchezIsBorn.weaponAttacks[0].attackBonus).toBe(4)
+    expect(sanchezIsBorn.weaponAttacks[0].damage).not.toBeNull()
+    expect(sanchezIsBorn.weaponAttacks[0].damage.formula).toBe("1d6 + 2")
+    expect(sanchezIsBorn.weaponAttacks[0].damage.damageType).toBe("Bludgeoning")
+
     expect(sanchezIsBorn.status).toBe(COMPLETE)
+
+    console.log(`Character Id: ${sanchezIsBorn.id}`)
   })
 
   test("Delete Sanchez", { tag: ["@delete"] }, async ({ request }) => {
