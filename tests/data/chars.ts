@@ -1,4 +1,4 @@
-import { AbilityScores, AttributesForAChar, EquipmentChoice, SkillsForAChar } from "../schemas/chars"
+import { AbilityScores, AttributesForAChar, EquipmentChoice, SkillsChoices } from "../schemas/chars"
 
 export const BASE_AND_BONUSES_FOR_THIS_LADY: AbilityScores = {
   base: {
@@ -23,15 +23,8 @@ export const ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN: AttributesForAChar = {
   abilityScores: BASE_AND_BONUSES_FOR_THIS_LADY
 }
 
-export const SKILLS_FOR_A_TRY_HARDER_BARBARIAN: SkillsForAChar = {
-  skillsProficiencies: ["Athletics", "Survival"],
-  skills: ["Athletics", "Survival", "Medicine", "Religion"],
-  classDetails: {
-    skillProficiencyChoices: ["Athletics", "Survival"]
-  },
-  backgroundDetails: {
-    skillsProficiencies: ["Medicine", "Religion"]
-  }
+export const SKILLS_FOR_A_TRY_HARDER_BARBARIAN: SkillsChoices = {
+  skillProficiencies: ["Athletics", "Survival", "Religion", "Medicine"],
 }
 
 export const EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN: EquipmentChoice = {

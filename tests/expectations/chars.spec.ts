@@ -6,9 +6,8 @@ import { statusCreated, statusOK } from "../lib/common"
 import { Character, CharacterBackground, CharacterClass, CharacterSpecies } from "../schemas/chars"
 import { listSpecies } from "../client/species"
 import { listBackgrounds } from "../client/backgrounds"
-import { ATHLETICS, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, BASE_AND_BONUSES_FOR_THIS_LADY, COMPLETE, DRAFT, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, HEAVY_ARMOR, IN_PROGRESS, INTIMIDATION, MARTIAL_WEAPONS, NUBYA, PERCEPTION, SKILLS_FOR_A_TRY_HARDER_BARBARIAN, SURVIVAL } from "../data/chars"
+import { ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, COMPLETE, DRAFT, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, IN_PROGRESS, NUBYA, SKILLS_FOR_A_TRY_HARDER_BARBARIAN } from "../data/chars"
 import { postBackgroundEquipment, postEquipment } from "../client/equipment"
-import { exit } from "node:process"
 
 let currentToken = ""
 let charId: number = 0
@@ -34,8 +33,9 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
     expect(chars[1].id).toBe(1698)
     expect(chars[2].name).toBe("Char -- 717")
 
-    let response = await delChar(request, currentToken, 4169)
-    // response = await delChar(request, currentToken, 4177)
+    let response = await delChar(request, currentToken, 4183)
+    response = await delChar(request, currentToken, 4184)
+    response = await delChar(request, currentToken, 4187)
   })
 
   test("Fetch, verify and save the Barbarian class Id", async ({ request }) => {
@@ -184,16 +184,15 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
 
     const skillsCharResponse = await patchChar(request, currentToken, charId, SKILLS_FOR_A_TRY_HARDER_BARBARIAN)
     const skillsChar = await skillsCharResponse.json()
-    // console.log(skillsChar)
 
     statusOK(skillsCharResponse)
-    expect(skillsChar.skills[0].isProficient).toBeFalsy()   // Athletics
+    expect(skillsChar.skills[0].isProficient).toBeTruthy()  // Athletics
     expect(skillsChar.skills[1].isProficient).toBeFalsy()   // Acrobatics
     expect(skillsChar.skills[2].isProficient).toBeFalsy()   // Sleight of Hand
     expect(skillsChar.skills[8].isProficient).toBeTruthy()  // Religion
     expect(skillsChar.skills[10].isProficient).toBeFalsy()  // Insight
     expect(skillsChar.skills[11].isProficient).toBeTruthy() // Medicine
-    expect(skillsChar.skills[13].isProficient).toBeFalsy()  // Survival
+    expect(skillsChar.skills[13].isProficient).toBeTruthy() // Survival
 
     expect(skillsChar.status).toBe(IN_PROGRESS)
 
@@ -226,7 +225,7 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
 
     statusOK(sanchezIsBornResponse)
 
-    // expect(sanchezIsBorn.status).toBe(COMPLETE)
+    expect(sanchezIsBorn.status).toBe(COMPLETE)
   })
 
   test("Delete Sanchez", { tag: ["@delete"] }, async ({ request }) => {

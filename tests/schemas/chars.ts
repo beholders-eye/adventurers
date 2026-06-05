@@ -18,11 +18,8 @@ export type AttributesForAChar = {
   abilityScores: AbilityScores
 }
 
-export type SkillsForAChar = {
-  skills: Array<string>,
-  skillsProficiencies: Array<string>,
-  classDetails: ClassProficiency,
-  backgroundDetails: BDProficiency
+export type SkillsChoices = {
+  skillProficiencies: Array<string>,
 }
 
 export type ClassProficiency = {
