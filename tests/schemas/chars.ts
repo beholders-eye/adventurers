@@ -1,8 +1,17 @@
 export type Character = {
   name: string
-  classId?: number
-  speciesId?: number
-  backgroundId?: number
+}
+
+export type CharacterClass = {
+  classId: number
+}
+
+export type CharacterSpecies = {
+  speciesId: number
+}
+
+export type CharacterBackground = {
+  backgroundId: number
 }
 
 export type AttributesForAChar = {

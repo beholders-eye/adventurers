@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test"
 import { token } from "../client/authn"
-import { createChar, getChar, getChars, patchChar } from "../client/chars"
+import { createChar, delChar, getChar, getCharAbilityScoreOptions, getChars, patchChar } from "../client/chars"
 import { listClasses } from "../client/classes"
 import { statusCreated, statusOK } from "../lib/common"
-import { Character } from "../schemas/chars"
+import { Character, CharacterBackground, CharacterClass, CharacterSpecies } from "../schemas/chars"
 import { listSpecies } from "../client/species"
 import { listBackgrounds } from "../client/backgrounds"
-import { ATHLETICS, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, COMPLETE, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, HEAVY_ARMOR, IN_PROGRESS, INTIMIDATION, MARTIAL_WEAPONS, NUBYA, PERCEPTION, SKILLS_FOR_A_TRY_HARDER_BARBARIAN, SURVIVAL } from "../data/chars"
+import { ATHLETICS, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, COMPLETE, DRAFT, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, HEAVY_ARMOR, IN_PROGRESS, INTIMIDATION, MARTIAL_WEAPONS, NUBYA, PERCEPTION, SKILLS_FOR_A_TRY_HARDER_BARBARIAN, SURVIVAL } from "../data/chars"
 import { postEquipment } from "../client/equipment"
 
 let currentToken = ""
@@ -15,9 +15,28 @@ let barbarianClassId: number = 0
 let humanSpeciesId: number = 0
 let hermitBackgroundId: number = 0
 
-test.describe.serial("Sanchez the Barbarian Outcast", () => {
+test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
   test.beforeAll(async ({ request }) => {
     currentToken = (await token(request))
+  })
+
+  test("List characters", async ({ request }) => {
+    const charsResponse = await getChars(request, currentToken)
+    const chars = await charsResponse.json()
+
+    statusOK(charsResponse)
+
+    console.log(chars)
+
+    expect(chars.length).toBeGreaterThan(2)
+    expect(chars[0].id).toBe(1675)
+    expect(chars[1].id).toBe(1698)
+    expect(chars[2].name).toBe("Char -- 717")
+
+    // XXX
+    await delChar(request, currentToken, 4120)
+    await delChar(request, currentToken, 4121)
+    await delChar(request, currentToken, 4122)
   })
 
   test("Fetch, verify and save the Barbarian class Id", async ({ request }) => {
@@ -53,20 +72,17 @@ test.describe.serial("Sanchez the Barbarian Outcast", () => {
     const backgroundAvailable = await backgroundAvailableResponse.json()
 
     await statusOK(backgroundAvailableResponse)
-    expect(backgroundAvailable.length).toBe(10)
-    expect(backgroundAvailable[6].name).toBe("Human")
-    expect(typeof backgroundAvailable[6].id).toBe("number")
+    expect(backgroundAvailable.length).toBe(16)
+    expect(backgroundAvailable[8].name).toBe("Hermit")
+    expect(typeof backgroundAvailable[8].id).toBe("number")
 
-    hermitBackgroundId = backgroundAvailable[6].id
+    hermitBackgroundId = backgroundAvailable[8].id
 
-    expect(hermitBackgroundId).toBeGreaterThanOrEqual(7)
+    expect(hermitBackgroundId).toBeGreaterThanOrEqual(10)
   })
 
   let Nubya: Character = {
     name: NUBYA,
-    classId: barbarianClassId,
-    speciesId: humanSpeciesId,
-    backgroundId: hermitBackgroundId
   }
 
   test("Create Sanchez", async ({ request }) => {
@@ -78,22 +94,62 @@ test.describe.serial("Sanchez the Barbarian Outcast", () => {
     charId = nubyaCharacter.id
 
     await statusCreated(draftCharResponse)
-    expect(nubyaCharacter.name).toBe(NUBYA)
-    expect(nubyaCharacter.classId).toBe(barbarianClassId)
-    expect(nubyaCharacter.speciesId).toBe(humanSpeciesId)
-    expect(nubyaCharacter.backgroundId).toBe(hermitBackgroundId)
-    expect(nubyaCharacter.status).toBe(IN_PROGRESS)
-    expect(nubyaCharacter.level).toBe(1)
-    expect(nubyaCharacter.abilityScores).toBeNull()
-    expect(nubyaCharacter.skillProficiencies).toContain(INTIMIDATION)
-    expect(nubyaCharacter.skillProficiencies).toContain(PERCEPTION)
-    expect(nubyaCharacter.skillProficiencies).toContain(SURVIVAL)
-    expect(nubyaCharacter.skillProficiencies).toContain(ATHLETICS)
-    expect(nubyaCharacter.armorProficiencies).not.toContain(HEAVY_ARMOR)
-    expect(nubyaCharacter.weaponProficiencies).toContain(MARTIAL_WEAPONS)
+    expect(nubyaCharacter.status).toBe(DRAFT)
+  })
+
+  test("Sanchez basic class", async ({ request }) => {
+
+    const classForNubya: CharacterClass = {
+      classId: barbarianClassId
+    }
+    const classChoiceCharResponse = await patchChar(request, currentToken, charId, classForNubya)
+    const classChoiceChar = await classChoiceCharResponse.json()
+
+    statusOK(classChoiceCharResponse)
+    expect(classChoiceChar.status).toBe(IN_PROGRESS)
+    expect(classChoiceChar.level).toBe(1)
+    expect(classChoiceChar.classId).toBe(barbarianClassId)
+    expect(classChoiceChar.classDetails.slug).toBe("barbarian")
+  })
+
+  test("Sanchez species", async ({ request }) => {
+    const speciesForNubya: CharacterSpecies = {
+      speciesId: humanSpeciesId
+    }
+    const speciesChoiceCharResponse = await patchChar(request, currentToken, charId, speciesForNubya)
+    const speciesChoiceChar = await speciesChoiceCharResponse.json()
+
+    statusOK(speciesChoiceCharResponse)
+    expect(speciesChoiceChar.status).toBe(IN_PROGRESS)
+    expect(speciesChoiceChar.speciesId).toBe(humanSpeciesId)
+  })
+
+  test("Sanchez background", async ({ request }) => {
+    const backgroundForNubya: CharacterBackground = {
+      backgroundId: hermitBackgroundId
+    }
+    const backgroundChoiceCharResponse = await patchChar(request, currentToken, charId, backgroundForNubya)
+    const backgroundChoiceChar = await backgroundChoiceCharResponse.json()
+
+    statusOK(backgroundChoiceCharResponse)
+    expect(backgroundChoiceChar.status).toBe(IN_PROGRESS)
+    expect(backgroundChoiceChar.backgroundId).toBe(hermitBackgroundId)
+    expect(backgroundChoiceChar.backgroundDetails.slug).toBe("hermit")
+
+    console.log(backgroundChoiceChar)
+    expect(backgroundChoiceChar.armorClass.base).toBe(10)
+    expect(backgroundChoiceChar.spellcastingSummary.canCastSpells).toBeFalsy()
+    expect(backgroundChoiceChar.pendingChoices.length).toBe(2)
   })
 
   test("Sanchez attributes", async ({ request }) => {
+    const abilityScoreOptionsResponse = await getCharAbilityScoreOptions(request, currentToken, charId)
+    const abilityScoreOptions = await abilityScoreOptionsResponse.json()
+    console.log(abilityScoreOptions)
+
+    const delResponse = await delChar(request, currentToken, charId)
+    const del = await delResponse.json()
+    console.log(del)
 
     const attrsCharResponse = await patchChar(request, currentToken, charId, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN)
     const attrsChar = await attrsCharResponse.json()
@@ -164,13 +220,3 @@ test.describe.serial("Sanchez the Barbarian Outcast", () => {
   })
 })
 
-test("List characters", async ({ request }) => {
-  const charsResponse = await getChars(request, currentToken)
-  const chars = await charsResponse.json()
-
-  statusOK(charsResponse)
-
-  expect(chars).toHaveAttribute("length")
-  expect(chars.length).toBeGreaterThan(2)
-  expect(chars[0].id).toBe(1675)
-})

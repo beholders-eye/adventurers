@@ -39,6 +39,7 @@ export const NUBYA: string = "Nubya Sanchez"
 
 export const IN_PROGRESS: string = "in_progress"
 export const COMPLETE: string = "complete"
+export const DRAFT: string = "draft"
 
 export const INTIMIDATION: string = "Intimidation"
 export const PERCEPTION: string = "Perception"

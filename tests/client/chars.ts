@@ -1,5 +1,5 @@
 import { APIRequestContext } from "@playwright/test"
-import { AbilityScores, AttributesForAChar, Character, SkillsForAChar } from "../schemas/chars";
+import { AttributesForAChar, Character, CharacterBackground, CharacterClass, CharacterSpecies, SkillsForAChar } from "../schemas/chars";
 
 export async function createChar(
   request: APIRequestContext,
@@ -19,7 +19,7 @@ export async function patchChar(
   request: APIRequestContext,
   token: string,
   id: number,
-  scores: AttributesForAChar | SkillsForAChar
+  scores: AttributesForAChar | SkillsForAChar | CharacterClass | CharacterSpecies | CharacterBackground
 
 ) {
   const response = await request.patch(`/api/characters/${id}`, {
@@ -57,4 +57,32 @@ export async function getChars(
   })
 
   return response
+}
+
+export async function getCharAbilityScoreOptions(
+  request: APIRequestContext,
+  token: string,
+  id: number
+) {
+  const response = await request.get(`/api/characters/${id}/ability-score-options`, {
+    headers: {
+      Authorization: 'Bearer ' + token
+    }
+  })
+
+  return response
+}
+
+export async function delChar(
+  request: APIRequestContext,
+  token: string,
+  id: number
+) {
+  const response = await request.delete(`/api/characters/${id}`, {
+    headers: {
+      Authorization: 'Bearer ' + token
+    }
+  })
+
+  return response;
 }
