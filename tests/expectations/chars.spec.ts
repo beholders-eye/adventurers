@@ -199,7 +199,7 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
 
   })
 
-  test("Sanchez Equipment", async ({ request }) => {
+  test("Sanchez equipment", async ({ request }) => {
 
     const equipmentCharResponse = await postEquipment(request, currentToken, charId, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN)
     const equipmentChar = await equipmentCharResponse.json()
@@ -210,7 +210,7 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
 
   })
 
-  test("Sanchez background Equipment", async ({ request }) => {
+  test("Sanchez background equipment", async ({ request }) => {
 
     const bgEquipmentCharResponse = await postBackgroundEquipment(request, currentToken, charId, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN)
     const bgEquipmentChar = await bgEquipmentCharResponse.json()
