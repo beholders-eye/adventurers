@@ -1,8 +1,8 @@
 import { AbilityScores, AttributesForAChar, EquipmentChoice, SkillsForAChar } from "../schemas/chars"
 
-const nubyaBaseAttributes: AbilityScores = {
+export const BASE_AND_BONUSES_FOR_THIS_LADY: AbilityScores = {
   base: {
-    STR: 17,
+    STR: 15,
     DEX: 12,
     CON: 15,
     INT: 8,
@@ -10,21 +10,27 @@ const nubyaBaseAttributes: AbilityScores = {
     CHA: 11
   },
   bonuses: {
-    STR: 2,
+    STR: 0,
     DEX: 0,
-    CON: 1,
+    CON: 2,
     INT: 0,
     WIS: 0,
-    CHA: 0
+    CHA: 1
   }
 }
 
 export const ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN: AttributesForAChar = {
-  abilityScores: nubyaBaseAttributes
+  abilityScores: BASE_AND_BONUSES_FOR_THIS_LADY
 }
 
 export const SKILLS_FOR_A_TRY_HARDER_BARBARIAN: SkillsForAChar = {
-  skillsProficiencies: ["Animal Handling", "Athletics", "Survival"]
+  skillsProficiencies: ["Medicine", "Religion", "Athletics", "Survival"],
+  classDetails: {
+    skillProficiencyChoices: ["Athletics", "Survival"]
+  },
+  backgroundDetails: {
+    skillsProficiencies: ["Medicine", "Religion"]
+  }
 }
 
 export const EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN: EquipmentChoice = {

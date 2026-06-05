@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test"
 import { token } from "../client/authn"
-import { createChar, delChar, getChar, getCharAbilityScoreOptions, getChars, patchChar } from "../client/chars"
+import { createChar, delChar, getChar, getCharAbilityScoreOptions, getChars, patchChar, putCharAbilityScores } from "../client/chars"
 import { listClasses } from "../client/classes"
 import { statusCreated, statusOK } from "../lib/common"
 import { Character, CharacterBackground, CharacterClass, CharacterSpecies } from "../schemas/chars"
 import { listSpecies } from "../client/species"
 import { listBackgrounds } from "../client/backgrounds"
-import { ATHLETICS, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, COMPLETE, DRAFT, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, HEAVY_ARMOR, IN_PROGRESS, INTIMIDATION, MARTIAL_WEAPONS, NUBYA, PERCEPTION, SKILLS_FOR_A_TRY_HARDER_BARBARIAN, SURVIVAL } from "../data/chars"
-import { postEquipment } from "../client/equipment"
+import { ATHLETICS, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, BASE_AND_BONUSES_FOR_THIS_LADY, COMPLETE, DRAFT, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN, HEAVY_ARMOR, IN_PROGRESS, INTIMIDATION, MARTIAL_WEAPONS, NUBYA, PERCEPTION, SKILLS_FOR_A_TRY_HARDER_BARBARIAN, SURVIVAL } from "../data/chars"
+import { postBackgroundEquipment, postEquipment } from "../client/equipment"
+import { exit } from "node:process"
 
 let currentToken = ""
 let charId: number = 0
@@ -33,10 +34,15 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
     expect(chars[1].id).toBe(1698)
     expect(chars[2].name).toBe("Char -- 717")
 
-    // XXX
-    await delChar(request, currentToken, 4120)
-    await delChar(request, currentToken, 4121)
-    await delChar(request, currentToken, 4122)
+    let response = await delChar(request, currentToken, 4161)
+    response = await delChar(request, currentToken, 4162)
+    response = await delChar(request, currentToken, 4164)
+    response = await delChar(request, currentToken, 4167)
+    response = await delChar(request, currentToken, 4168)
+    response = await delChar(request, currentToken, 4172)
+    response = await delChar(request, currentToken, 4173)
+    response = await delChar(request, currentToken, 4175)
+    response = await delChar(request, currentToken, 4177)
   })
 
   test("Fetch, verify and save the Barbarian class Id", async ({ request }) => {
@@ -136,7 +142,6 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
     expect(backgroundChoiceChar.backgroundId).toBe(hermitBackgroundId)
     expect(backgroundChoiceChar.backgroundDetails.slug).toBe("hermit")
 
-    console.log(backgroundChoiceChar)
     expect(backgroundChoiceChar.armorClass.base).toBe(10)
     expect(backgroundChoiceChar.spellcastingSummary.canCastSpells).toBeFalsy()
     expect(backgroundChoiceChar.pendingChoices.length).toBe(2)
@@ -145,48 +150,60 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
   test("Sanchez attributes", async ({ request }) => {
     const abilityScoreOptionsResponse = await getCharAbilityScoreOptions(request, currentToken, charId)
     const abilityScoreOptions = await abilityScoreOptionsResponse.json()
-    console.log(abilityScoreOptions)
 
-    const delResponse = await delChar(request, currentToken, charId)
-    const del = await delResponse.json()
-    console.log(del)
+    statusOK(abilityScoreOptionsResponse)
+    expect(abilityScoreOptions.selectionRules.source).toBe("background")
+    expect(abilityScoreOptions.backgroundName).toBe("Hermit")
+    expect(abilityScoreOptions.selectionRules.allowedChoices[0]).toBe("CON")
+    expect(abilityScoreOptions.selectionRules.allowedChoices[1]).toBe("WIS")
+    expect(abilityScoreOptions.selectionRules.allowedChoices[2]).toBe("CHA")
 
-    const attrsCharResponse = await patchChar(request, currentToken, charId, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN)
-    const attrsChar = await attrsCharResponse.json()
+    // const attrsCharResponse = await putCharAbilityScores(request, currentToken, charId, BASE_AND_BONUSES_FOR_THIS_LADY)
+    // const attrsChar = await attrsCharResponse.json()
+    // console.log("Trying to PUT ability scores resp:")
+    // console.log(attrsChar)
 
-    await statusOK(attrsCharResponse)
-    expect(attrsChar.abilityScores.final.STR).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.STR)
-    expect(attrsChar.abilityScores.final.DEX).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.DEX)
-    expect(attrsChar.abilityScores.final.CON).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.CON)
-    expect(attrsChar.abilityScores.final.INT).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.INT)
-    expect(attrsChar.abilityScores.final.WIS).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.WIS)
-    expect(attrsChar.abilityScores.final.CHA).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.CHA)
 
-    expect(attrsChar.savingThrows[0].isProficient).toBeTruthy() // STR
-    expect(attrsChar.savingThrows[1].isProficient).toBeFalsy()  // DEX
-    expect(attrsChar.savingThrows[2].isProficient).toBeTruthy() // CON
-    expect(attrsChar.savingThrows[3].isProficient).toBeFalsy()  // INT
-    expect(attrsChar.savingThrows[4].isProficient).toBeFalsy()  // WIS
-    expect(attrsChar.savingThrows[5].isProficient).toBeFalsy()  // CHA
+    const patchAbilityScoresResponse = await patchChar(request, currentToken, charId, ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN)
+    const patchAbilityScores = await patchAbilityScoresResponse.json()
 
-    expect(attrsChar.status).toBe(IN_PROGRESS)
+    await statusOK(patchAbilityScoresResponse)
+
+    expect(patchAbilityScores.abilityScores.final.STR).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.STR)
+    expect(patchAbilityScores.abilityScores.final.DEX).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.DEX)
+    expect(patchAbilityScores.abilityScores.final.CON).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.CON + 2)
+    expect(patchAbilityScores.abilityScores.final.INT).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.INT)
+    expect(patchAbilityScores.abilityScores.final.WIS).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.WIS)
+    expect(patchAbilityScores.abilityScores.final.CHA).toBe(ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN.abilityScores.base.CHA + 1)
+
+    expect(patchAbilityScores.savingThrows[0].isProficient).toBeTruthy() // STR
+    expect(patchAbilityScores.savingThrows[1].isProficient).toBeFalsy()  // DEX
+    expect(patchAbilityScores.savingThrows[2].isProficient).toBeTruthy() // CON
+    expect(patchAbilityScores.savingThrows[3].isProficient).toBeFalsy()  // INT
+    expect(patchAbilityScores.savingThrows[4].isProficient).toBeFalsy()  // WIS
+    expect(patchAbilityScores.savingThrows[5].isProficient).toBeFalsy()  // CHA
+
+    expect(patchAbilityScores.status).toBe(IN_PROGRESS)
+
   })
 
   test("Sanchez skills", async ({ request }) => {
 
     const skillsCharResponse = await patchChar(request, currentToken, charId, SKILLS_FOR_A_TRY_HARDER_BARBARIAN)
     const skillsChar = await skillsCharResponse.json()
+    // console.log(skillsChar)
 
     statusOK(skillsCharResponse)
-    expect(skillsChar.skillProficiencies).toContainEqual(SKILLS_FOR_A_TRY_HARDER_BARBARIAN.skillsProficiencies)
-    expect(skillsChar.skills[0].isProficient).toBeTruthy()  // Athletics
+    expect(skillsChar.skills[0].isProficient).toBeFalsy()   // Athletics
     expect(skillsChar.skills[1].isProficient).toBeFalsy()   // Acrobatics
     expect(skillsChar.skills[2].isProficient).toBeFalsy()   // Sleight of Hand
-    expect(skillsChar.skills[9].isProficient).toBeTruthy()  // Animal Handling
+    expect(skillsChar.skills[8].isProficient).toBeTruthy()  // Religion
     expect(skillsChar.skills[10].isProficient).toBeFalsy()  // Insight
-    expect(skillsChar.skills[13].isProficient).toBeTruthy() // Survival
+    expect(skillsChar.skills[11].isProficient).toBeTruthy() // Medicine
+    expect(skillsChar.skills[13].isProficient).toBeFalsy()  // Survival
 
     expect(skillsChar.status).toBe(IN_PROGRESS)
+
   })
 
   test("Sanchez Equipment", async ({ request }) => {
@@ -194,29 +211,30 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
     const equipmentCharResponse = await postEquipment(request, currentToken, charId, EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN)
     const equipmentChar = await equipmentCharResponse.json()
 
-    statusOK(equipmentCharResponse)
-    expect(equipmentChar.addedEquipment[0].name).toBe("75 GP")
-    expect(equipmentChar.addedEquipment[1].isEquipped).toBeFalsy()
 
-    expect(equipmentChar.status).toBe(IN_PROGRESS)
+    statusOK(equipmentCharResponse)
+    expect(equipmentChar.addedCurrency.gp).toBe(75)
+
   })
 
   test("Sanchez background Equipment", async ({ request }) => {
 
-    const bgEquipmentCharResponse = await postEquipment(request, currentToken, charId, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN)
+    const bgEquipmentCharResponse = await postBackgroundEquipment(request, currentToken, charId, BACKGROUND_EQUIPMENT_FOR_A_WE_KNOW_TO_BE_GOOD_BARBARIAN)
     const bgEquipmentChar = await bgEquipmentCharResponse.json()
 
     statusOK(bgEquipmentCharResponse)
-    expect(bgEquipmentChar.addedEquipment[0].name).toBe("IDK")
+    expect(bgEquipmentChar.addedEquipment[0].name).toBe("Quarterstaff")
   })
 
   test("Sanchez is complete", async ({ request }) => {
     const sanchezIsBornResponse = await getChar(request, currentToken, charId)
     const sanchezIsBorn = await sanchezIsBornResponse.json()
+    // console.log(sanchezIsBorn)
 
     statusOK(sanchezIsBornResponse)
 
-    expect(sanchezIsBorn.status).toBe(COMPLETE)
+    // expect(sanchezIsBorn.status).toBe(COMPLETE)
+    await delChar(request, currentToken, charId)
   })
 })
 

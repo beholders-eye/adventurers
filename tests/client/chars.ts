@@ -1,5 +1,5 @@
 import { APIRequestContext } from "@playwright/test"
-import { AttributesForAChar, Character, CharacterBackground, CharacterClass, CharacterSpecies, SkillsForAChar } from "../schemas/chars";
+import { AbilityScores, AttributesForAChar, Character, CharacterBackground, CharacterClass, CharacterSpecies, SkillsForAChar } from "../schemas/chars";
 
 export async function createChar(
   request: APIRequestContext,
@@ -68,6 +68,22 @@ export async function getCharAbilityScoreOptions(
     headers: {
       Authorization: 'Bearer ' + token
     }
+  })
+
+  return response
+}
+
+export async function putCharAbilityScores(
+  request: APIRequestContext,
+  token: string,
+  id: number,
+  data: { [key: string]: { [key: string]: number } },
+) {
+  const response = await request.put(`/api/characters/${id}/ability-scores`, {
+    headers: {
+      Authorization: 'Bearer ' + token
+    },
+    data
   })
 
   return response

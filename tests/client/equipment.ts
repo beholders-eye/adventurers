@@ -16,3 +16,18 @@ export async function postEquipment(
 
 }
 
+export async function postBackgroundEquipment(
+  request: APIRequestContext,
+  token: string,
+  charId: number,
+  data: EquipmentChoice
+) {
+  const response = await request.post(`/api/characters/${charId}/equipment/background-choice`, {
+    headers: { Authorization: 'Bearer ' + token },
+    data,
+  })
+
+  return response
+
+}
+
