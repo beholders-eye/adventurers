@@ -19,7 +19,8 @@ export type AttributesForAChar = {
 }
 
 export type SkillsForAChar = {
-  skillProficiencies: Array<string>,
+  skills: Array<string>,
+  skillsProficiencies: Array<string>,
   classDetails: ClassProficiency,
   backgroundDetails: BDProficiency
 }

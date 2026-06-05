@@ -24,7 +24,8 @@ export const ATTRIBUTES_FOR_A_NOT_SO_GOOD_BARBARIAN: AttributesForAChar = {
 }
 
 export const SKILLS_FOR_A_TRY_HARDER_BARBARIAN: SkillsForAChar = {
-  skillsProficiencies: ["Medicine", "Religion", "Athletics", "Survival"],
+  skillsProficiencies: ["Athletics", "Survival"],
+  skills: ["Athletics", "Survival", "Medicine", "Religion"],
   classDetails: {
     skillProficiencyChoices: ["Athletics", "Survival"]
   },

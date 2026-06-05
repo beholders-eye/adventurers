@@ -34,15 +34,8 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
     expect(chars[1].id).toBe(1698)
     expect(chars[2].name).toBe("Char -- 717")
 
-    let response = await delChar(request, currentToken, 4161)
-    response = await delChar(request, currentToken, 4162)
-    response = await delChar(request, currentToken, 4164)
-    response = await delChar(request, currentToken, 4167)
-    response = await delChar(request, currentToken, 4168)
-    response = await delChar(request, currentToken, 4172)
-    response = await delChar(request, currentToken, 4173)
-    response = await delChar(request, currentToken, 4175)
-    response = await delChar(request, currentToken, 4177)
+    let response = await delChar(request, currentToken, 4169)
+    // response = await delChar(request, currentToken, 4177)
   })
 
   test("Fetch, verify and save the Barbarian class Id", async ({ request }) => {
@@ -229,12 +222,17 @@ test.describe.serial("Sanchez the Barbarian Hermit Lady", () => {
   test("Sanchez is complete", async ({ request }) => {
     const sanchezIsBornResponse = await getChar(request, currentToken, charId)
     const sanchezIsBorn = await sanchezIsBornResponse.json()
-    // console.log(sanchezIsBorn)
+    console.log(sanchezIsBorn)
 
     statusOK(sanchezIsBornResponse)
 
     // expect(sanchezIsBorn.status).toBe(COMPLETE)
-    await delChar(request, currentToken, charId)
+  })
+
+  test("Delete Sanchez", { tag: ["@delete"] }, async ({ request }) => {
+    const delResponse = await delChar(request, currentToken, charId)
+
+    statusOK(delResponse)
   })
 })
 
